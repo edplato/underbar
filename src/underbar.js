@@ -94,9 +94,9 @@
   _.reject = function(collection, test) {
     var rejected = [];
 
-    _.filter(collection, function(index) {
-      if(!test(index)){
-        rejected.push(index);
+    _.filter(collection, function(item) {
+      if(!test(item)){
+        rejected.push(item);
       }
     });
     return rejected;
@@ -106,11 +106,27 @@
 
   // Produce a duplicate-free version of the array.
   _.uniq = function(array) {
-  };
+    var unique = [];
+    var holder = {};
 
+    _.each(array, function(item) {
+      if(holder[item] === undefined){
+        unique.push(item);
+      } 
+      holder[item] = true;
+      });  
+    return unique;
+  };
 
   // Return the results of applying an iterator to each element.
   _.map = function(collection, iterator) {
+    var array = [];
+
+    _.each(collection, function(item) {
+      array.push(iterator(item));
+    });
+
+    return array;
     // map() is a useful primitive iteration function that works a lot
     // like each(), but in addition to running the operation on all
     // the members, it also maintains an array of results.
@@ -155,6 +171,15 @@
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
   _.reduce = function(collection, iterator, accumulator) {
+    _.each(collection, function(item) {
+      if(accumulator === undefined) {
+        accumulator = item;
+        iterator(0, item);
+      } else {
+        accumulator = iterator(accumulator, item);
+      }
+    });
+    return accumulator;
   };
 
   // Determine if the array or object contains a given value (using `===`).
