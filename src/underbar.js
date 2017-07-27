@@ -242,13 +242,27 @@
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
+    // Is it possible to use reduce for this? I kept failing on 'returns the first argument' assertion.
+    _.each(arguments, function(arg) {
+      _.each(arg, function(value, key) {
+        obj[key] = value;
+      });
+    });
+    return obj;
   };
-
+  
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
+    _.each(arguments, function(arg) {
+      _.each(arg, function(value, key) {
+        if(!obj.hasOwnProperty(key)){
+          obj[key] = value;
+        }
+      });
+    });
+    return obj;
   };
-
 
   /**
    * FUNCTIONS
