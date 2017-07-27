@@ -309,7 +309,7 @@
       var arg = JSON.stringify(arguments);
       if(store[arg] === undefined) {
         store[arg] = func.apply(this, arguments);
-      }
+      };
       return store[arg];
     };
   };
@@ -321,10 +321,8 @@
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
-    var inputArgs;
-    if(arguments.length > 2) {
-      inputArgs = Array.prototype.slice.call(arguments).slice(2);
-    };
+    var inputArgs = _.map(arguments, function(arg) { return arg;}).slice(2);
+
     return setTimeout(function() {
       func.apply(this, inputArgs);
       }, wait);
@@ -343,6 +341,17 @@
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+    var arr = array.slice(0);
+    // implements Fisher-Yates shuffle edited for my understanding
+    var len = arr.length;
+
+    while (len) {
+      let randomIndex = Math.floor(Math.random() * len--);
+      let temp = arr[len];
+      arr[len] = arr[randomIndex];
+      arr[randomIndex] = temp;
+    }
+    return arr;
   };
 
 
