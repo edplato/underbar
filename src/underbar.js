@@ -174,7 +174,7 @@
     _.each(collection, function(item) {
       if(accumulator === undefined) {
         accumulator = item;
-        iterator(0, item);
+        iterator(accumulator);
       } else {
         accumulator = iterator(accumulator, item);
       }
@@ -197,12 +197,24 @@
 
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
+    var passed = true;
+    if(iterator === undefined){
+      iterator = _.identity;
+    }
+    return _.reduce(collection, function(passed, item) {
+      if(!passed){
+        return false;
+      }
+      return !(!iterator(item));
+    }, passed);
     // TIP: Try re-using reduce() here.
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
   _.some = function(collection, iterator) {
+
+    
     // TIP: There's a very clever way to re-use every() here.
   };
 
