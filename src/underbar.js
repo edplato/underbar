@@ -250,7 +250,7 @@
     });
     return obj;
   };
-  
+
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
@@ -304,6 +304,14 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+    var store = {};
+    return function() {
+      var arg = JSON.stringify(arguments);
+      if(store[arg] === undefined) {
+        store[arg] = func.apply(this, arguments);
+      }
+      return store[arg];
+    };
   };
 
   // Delays a function for the given number of milliseconds, and then calls
@@ -313,7 +321,15 @@
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
+    var inputArgs;
+    if(arguments.length > 2) {
+      inputArgs = Array.prototype.slice.call(arguments).slice(2);
+    };
+    return setTimeout(function() {
+      func.apply(this, inputArgs);
+      }, wait);
   };
+
 
 
   /**
