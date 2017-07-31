@@ -366,6 +366,14 @@
   // Calls the method named by functionOrKey on each value in the list.
   // Note: You will need to learn a bit about .apply to complete this.
   _.invoke = function(collection, functionOrKey, args) {
+
+    return _.map(collection, function(item) {
+      if(typeof(functionOrKey) === 'function') {
+        return functionOrKey.apply(item, args);
+      } else {
+        return item[functionOrKey].apply(item, args);
+      }
+    });
   };
 
   // Sort the object's values by a criterion produced by an iterator.
@@ -373,6 +381,14 @@
   // of that string. For example, _.sortBy(people, 'name') should sort
   // an array of people by their name.
   _.sortBy = function(collection, iterator) {
+
+    return collection.sort(function(a, b) {
+      if(typeof(iterator) === 'string') {
+        return a[iterator] - b[iterator];
+      } else {
+        return iterator(a) - iterator(b);
+      }
+    });
   };
 
   // Zip together two or more arrays with elements of the same index
@@ -381,6 +397,12 @@
   // Example:
   // _.zip(['a','b','c','d'], [1,2,3]) returns [['a',1], ['b',2], ['c',3], ['d',undefined]]
   _.zip = function() {
+    var zipped = [];
+
+    for(var i = 0; i < arguments.length; i++) {
+      zipped[i] = _.pluck(arguments, i);
+    };
+    return zipped;
   };
 
   // Takes a multidimensional array and converts it to a one-dimensional array.
@@ -388,16 +410,49 @@
   //
   // Hint: Use Array.isArray to check if something is an array
   _.flatten = function(nestedArray, result) {
+
+    return _.reduce(nestedArray, function(arrA,arrB) {
+      if(Array.isArray(arrB)) {
+        return arrA.concat(_.flatten(arrB));
+      }
+      return arrA.concat(arrB);
+    }, [])
   };
 
   // Takes an arbitrary number of arrays and produces an array that contains
   // every item shared between all the passed-in arrays.
   _.intersection = function() {
+    var argumentsArray = Array.prototype.slice.call(arguments);
+
+    return _.reduce(argumentsArray, function(shared, item) {
+      if(shared.length === 0) {
+       return item;
+      };
+
+      let sharedBetween = [];
+      let tempArr = _.each(item, function(itemCheck) {
+        if(_.indexOf(shared, itemCheck) !== -1) {
+          sharedBetween.push(itemCheck);
+        }
+      });
+ 
+      return sharedBetween;
+    }, []);
+
   };
 
   // Take the difference between one array and a number of other arrays.
   // Only the elements present in just the first array will remain.
   _.difference = function(array) {
+    var argumentsArray = _.flatten(Array.prototype.slice.call(arguments, 1));
+    var diffItems = [];
+    
+    _.each(array, function(item) {
+          if(_.indexOf(argumentsArray, item) === -1) {
+            diffItems.push(item);
+          };
+    });
+    return diffItems;
   };
 
   // Returns a function, that, when invoked, will only be triggered at most once
